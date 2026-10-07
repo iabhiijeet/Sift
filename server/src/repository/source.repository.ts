@@ -1,5 +1,6 @@
 import type {Prisma} from "../generated/prisma/client.js"
 import prisma from "../lib/db.js"
+import { ListSourcesQuery } from "../validators/source.validator.js";
 
 
 export const sourceSelect = {
@@ -28,3 +29,28 @@ export type CreateSourceData = {
     status?: SourceRecord["status"];
     metadata?: Prisma.InputJsonValue;
 };
+
+export function createSourceRecord(data: CreateSourceData) {
+    return prisma.source.create({
+        data: {
+            workspaceId: data.workspaceId,
+            type: data.type,
+            title: data.title,
+            content: data.content ?? null,
+            url: data.url ?? null,
+            status: data.status ?? "PENDING",
+            metadata: data.metadata,
+        },
+        select: sourceSelect,
+    });
+}
+
+export function findSourcesByWorkspaceId(workspaceId:string, filters:ListSourcesQuery={}){
+    const where:Prisma.SourceWhereInput = {workspaceId};
+    if(filters.type){
+        where.type = filters.type;
+    }
+    if(filters.status){
+        where.status = filters.status;
+    }
+}

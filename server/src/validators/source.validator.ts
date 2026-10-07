@@ -11,7 +11,7 @@ export const sourceTypeSchema = z.enum([
 export const listQuerySchemaStatus =  z.enum([
     "PENDING",
     "PROCESSING",
-    "COMPLETED",
+    "READY",
     "FAILED"
 ])
 
