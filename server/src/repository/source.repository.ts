@@ -53,4 +53,53 @@ export function findSourcesByWorkspaceId(workspaceId:string, filters:ListSources
     if(filters.status){
         where.status = filters.status;
     }
+    if(filters.q){
+        where.OR=[
+            { title: { contains: filters.q, mode: "insensitive" } },
+            { content: { contains: filters.q, mode: "insensitive" } },
+        ]
+    }
+
+    return prisma.source.findMany({
+        where,
+        select:sourceSelect,
+        orderBy:{createdAt:"desc"},
+    })
+}
+
+export function findSourceByIdAndWorkspaceId(sourceId:string, workspaceId:string){
+    return prisma.source.findFirst({
+        where:{
+            id:sourceId, workspaceId
+        },
+        select:sourceSelect,
+    })
+}
+
+export async function deleteSourceRecord(sourceId:string){
+    return prisma.source.delete({
+        where:{id:sourceId},
+    })
+}
+
+export function findSourceById(sourceId:string){
+    return prisma.source.findFirst({
+        where:{id:sourceId},
+        select:sourceSelect,
+    })
+}
+
+export function updateSourceRecord(
+    sourceId: string,
+    data: {
+        content?: string | null;
+        status?: SourceRecord["status"];
+        metadata?: Prisma.InputJsonValue;
+    },
+) {
+    return prisma.source.update({
+        where: { id: sourceId },
+        data,
+        select: sourceSelect,
+    });
 }

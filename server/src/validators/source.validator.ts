@@ -66,7 +66,12 @@ export const importWebSearchSchema = z.object({
     url: z.string().trim().url(),
 });
 
-export type CreateSourceInput = z.infer<typeof sourceTypeSchema>;
+export const createSourceSchema = z.discriminatedUnion("type", [
+    createTextSourceSchema,
+    createMarkdownSourceSchema,
+]);
+
+export type CreateSourceInput = z.infer<typeof createSourceSchema>;
 export type ListSourcesQuery = z.infer<typeof listSourcesQuerySchema>;
 export type ImportWebsiteInput = z.infer<typeof importWebsiteSchema>;
 export type ImportYoutubeInput = z.infer<typeof importYoutubeSchema>;
