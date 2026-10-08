@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# closecopy
 
-## Getting Started
+A complete, dark-first landing page for an AI source workspace. Built in the existing Next.js 16 App Router project with TypeScript, Tailwind CSS 4, the repository’s Base UI-based shadcn components, Framer Motion, Lucide, Lenis, and Sonner.
 
-First, run the development server:
+## Install and run
 
-```bash
+The only missing shadcn component was **sonner**, now added by the official CLI. All pre-existing generated UI files were preserved.
+
+```powershell
+cd client
+npx shadcn@latest add sonner
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+For this completed checkout, Sonner is already present: just run `npm install` and `npm run dev`. Visit http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To add the runtime dependencies to another copy of the original repo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm install framer-motion lenis sonner @fontsource-variable/geist @fontsource-variable/geist-mono @fontsource/instrument-serif
+```
 
-## Learn More
+The fonts are self-hosted from npm packages. Building and rendering require no Google Fonts connection. Node 20.9+ is required by the existing Next.js version.
 
-To learn more about Next.js, take a look at the following resources:
+## Theme variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Theme changes live in `app/globals.css`. Both `:root` and `.dark` use the dark palette. Components reference semantic Tailwind tokens; generated primitives are untouched.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable           | Value     | Purpose                 |
+| ------------------ | --------- | ----------------------- |
+| --background       | #09090B   | Near-black canvas       |
+| --foreground       | #F4F3FA   | Primary text            |
+| --card             | #111115   | Glass surfaces          |
+| --primary          | #8B5CF6   | Electric violet         |
+| --accent-end       | #22D3EE   | Cyan gradient endpoint  |
+| --citation         | #C6CF8D   | Warm citation highlight |
+| --muted-foreground | #9897A7   | Secondary text          |
+| --border           | #FFFFFF12 | Translucent borders     |
 
-## Deploy on Vercel
+The font variables map to Geist Variable, Geist Mono Variable, and Instrument Serif. Custom gradient styles combine the primary and accent-end variables. Reduced-motion media rules suppress primitive CSS transitions, while MotionConfig and an SSR-safe reduced-motion preference hook govern Framer Motion. Lenis, cursor glow, autoplay, and ambient loops are disabled for reduced motion.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/page.tsx`: composes all twelve sections in order.
+- `app/layout.tsx`: metadata, dark theme, shared providers and Toaster.
+- `components/sections/`: Navbar, Hero, Marquee, Features, ArtifactsShowcase, HowItWorks, Playground, Testimonials, Pricing, FAQ, CTA, Footer.
+- `components/artifacts/`: reusable SummaryArtifact, StudyGuideArtifact, QuizArtifact, FlashcardArtifact, MindMapArtifact, TimelineArtifact, ReportArtifact, SlidesArtifact, and ArtifactRenderer.
+- `components/landing/`: custom visual helpers and motion wrappers around existing primitives; no regenerated UI components.
+- `components/ui/`: existing shadcn components plus the officially generated sonner wrapper.
+- `lib/mock-data.ts`: typed sources, excerpts, chat scripts, artifact content, pricing, FAQ, and sample testimonials.
+- `lib/artifact-export.ts`: local Markdown serialization and download.
+- `types/index.ts`: Source, Citation, ArtifactType, Artifact, ChatMessage, QuizQuestion.
+
+## Try the interactions
+
+- Pause or play the hero’s looping three-panel workspace.
+- Click or focus citation chips to inspect source excerpts.
+- Switch among all eight artifact tabs with mouse, touch, or keyboard.
+- Answer all quiz questions and retry. Flip flashcards and swipe their carousel.
+- Drag mind-map nodes, or focus a node and use arrow keys; its connection follows.
+- Generate an artifact: choose sample sources, choose a format, then watch the simulated progress.
+- Copy an artifact, download real Markdown, or share with the Web Share API. PDF and DOCX actions are explicitly labeled demo previews.
+- Add local files to the playground. Only file names and sizes are displayed; no file content is read or uploaded. Chat continues to use the bundled sample sources.
+- Send suggested prompts or a custom question. Replies stream from prewritten sample content. The quiz prompt creates an interactive quiz.
+- Resize playground panels on desktop; use Sources / Chat / Artifacts tabs on mobile.
+- Change billing frequency, open FAQ answers, or submit a mock newsletter address.
+
+Pricing, usage counters, testimonials, authentication, social links, PDF/DOCX export, semantic retrieval, and privacy controls are product illustrations. Demo notices keep that distinction visible. Newsletter submissions and selected files are held only in browser memory. No application API calls are made.
+
+## Checks
+
+```powershell
+npx tsc --noEmit
+npm run lint:landing
+npm run build
+# Optional isolated browser smoke check:
+npx playwright install chromium
+npm run test:smoke
+```
+
+Full-repo `npm run lint` also checks the untouched generated code. It currently reports pre-existing `react-hooks/set-state-in-effect` errors in `components/ui/carousel.tsx:98` and `hooks/use-mobile.ts:14`. The landing-page check keeps these separate while respecting the instruction to preserve existing primitives.
+
+## Connecting a real API later
+
+Replace the arrays in `lib/mock-data.ts` with typed data supplied to sections or fetched through your existing query layer. Artifact views already accept content props; extend ArtifactRenderer to pass the relevant content from a validated Artifact payload. Keep source IDs and citations in the API contract rather than deriving them from displayed text.
+
+Replace Playground’s `send` handler with an authenticated request to your future chat endpoint. Stream SSE or newline-delimited JSON events through a ReadableStream: append text delta events to the current assistant message, attach citation events containing source ID / page / excerpt, and mark the message complete on the final event. Use AbortController to cancel on unmount or when starting another request; handle non-2xx responses and interrupted streams in the UI. The Typewriter component is only a visual simulator and should be replaced by the actual accumulated stream text.
+
+Replace GenerateDialog’s timer with a generation job: submit selected source IDs and ArtifactType, display job progress, then render the returned structured content. Replace local file metadata with your upload + indexing flow, and use a source status field for Progress. Implement PDF/DOCX export at your document-generation boundary. Account creation, billing, newsletter subscriptions, sharing permissions, encryption, and privacy claims need actual services before launch.
