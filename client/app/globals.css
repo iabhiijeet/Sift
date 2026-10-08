@@ -214,26 +214,20 @@
   .logo-mark {
     position: relative;
     display: inline-block;
-    width: 24px;
-    height: 27px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 6px;
   }
-  .logo-mark span {
+  .logo-image {
     position: absolute;
-    width: 17px;
-    height: 21px;
-    border-radius: 4px;
-    border: 1.7px solid var(--primary);
-    left: 2px;
-    top: 1px;
-    transform: rotate(-8deg);
-  }
-  .logo-mark span + span {
-    left: 7px;
-    top: 5px;
-    background: var(--background);
-    border-color: color-mix(in srgb, var(--primary) 50%, var(--accent-end));
-    transform: rotate(5deg);
+    width: var(--logo-image-width);
+    max-width: none;
+    height: auto;
+    left: var(--logo-image-left);
+    top: var(--logo-image-top);
+    mix-blend-mode: screen;
   }
   .aurora-orb {
     background: radial-gradient(

@@ -10,7 +10,6 @@ import {
 import {
   UploadCloud,
   FileText,
-  Sparkles,
   ArrowDown,
   ArrowUpRight,
   Network,
@@ -20,6 +19,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import Logo from "@/components/landing/Logo";
 import SectionHeading from "@/components/landing/SectionHeading";
 import Reveal from "@/components/landing/Reveal";
 import CitationChip from "@/components/landing/CitationChip";
@@ -96,7 +96,7 @@ function StepVisual({ step }: { step: number }) {
               </div>
               <div className="mt-6 flex gap-3">
                 <span className="text-primary mt-1">
-                  <Sparkles className="size-5" />
+                  <Logo markOnly markClassName="size-6" />
                 </span>
                 <div>
                   <p className="text-xs mb-3 font-medium">

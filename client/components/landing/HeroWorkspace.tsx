@@ -129,7 +129,7 @@ export default function HeroWorkspace() {
                       </div>
                       <div className="flex gap-2.5">
                         <span className="size-6 shrink-0 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
-                          <Sparkles className="size-3" />
+                          <Logo markOnly markClassName="size-6" />
                         </span>
                         <div className="flex-1">
                           <p className="text-[10px] font-medium mb-2">

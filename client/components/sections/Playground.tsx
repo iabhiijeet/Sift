@@ -49,6 +49,7 @@ import {
   artifactTypes,
 } from "@/lib/mock-data";
 import type { Source, ChatMessage, ArtifactType } from "@/types";
+import Logo from "@/components/landing/Logo";
 import SectionHeading from "@/components/landing/SectionHeading";
 import Reveal from "@/components/landing/Reveal";
 import SourceList from "@/components/landing/SourceList";
@@ -194,7 +195,7 @@ export default function Playground() {
             {!messages.length ? (
               <div className="pt-8 pb-3 text-center">
                 <span className="size-11 rounded-xl border border-primary/15 bg-primary/8 text-primary grid place-items-center mx-auto mb-4">
-                  <Sparkles className="size-5" />
+                  <Logo markOnly markClassName="size-8" />
                 </span>
                 <h3 className="text-lg tracking-tight">
                   Let’s make a little connection.
@@ -219,7 +220,11 @@ export default function Playground() {
                 >
                   {m.role === "assistant" ? (
                     <>
-                      <Sparkles className="size-3.5 text-primary shrink-0 mt-1" />
+                      <Logo
+                        markOnly
+                        markClassName="size-5"
+                        className="shrink-0 mt-0.5"
+                      />
                       <div className="text-xs text-foreground/75 leading-[1.9]">
                         {busy && i === messages.length - 1 ? (
                           <Typewriter
